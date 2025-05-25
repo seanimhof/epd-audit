@@ -15,9 +15,7 @@ contract Audit {
 
     AuditEntry[] public auditLog;
 
-    event AuditLogged(
-        uint256 timestamp, string accessorId, string epdId, string accessType, bytes32 dataHash
-    );
+    event AuditLogged(uint256 timestamp, string accessorId, string epdId, string accessType, bytes32 dataHash);
 
     function addAuditLog(string memory _accessorId, string memory _epdId, string memory _accessType) public {
         bytes32 dataHash = keccak256(abi.encode(_accessorId, _epdId, _accessType));
