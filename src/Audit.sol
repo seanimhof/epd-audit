@@ -2,7 +2,6 @@
 pragma solidity ^0.8.28;
 
 contract Audit {
-
     struct AuditEntry {
         uint256 timestamp;
         string accessorId;
@@ -16,17 +15,21 @@ contract Audit {
 
     AuditEntry[] public auditLog;
 
-    event AuditLogged(uint256 timestamp, string indexed _accessorId, string indexed _epdId, string _accessType, bytes32 dataHash);
+    event AuditLogged(
+        uint256 timestamp, string accessorId, string epdId, string accessType, bytes32 dataHash
+    );
 
     function addAuditLog(string memory _accessorId, string memory _epdId, string memory _accessType) public {
         bytes32 dataHash = keccak256(abi.encode(_accessorId, _epdId, _accessType));
-        auditLog.push(AuditEntry({
-            timestamp: block.timestamp,
-            accessorId: _accessorId,
-            epdId: _epdId,
-            accessType: _accessType,
-            dataHash: dataHash
-        }));
+        auditLog.push(
+            AuditEntry({
+                timestamp: block.timestamp,
+                accessorId: _accessorId,
+                epdId: _epdId,
+                accessType: _accessType,
+                dataHash: dataHash
+            })
+        );
         accessorAuditIndexes[_accessorId].push(auditLog.length - 1);
         accessorAuditIndexes[_epdId].push(auditLog.length - 1);
         emit AuditLogged(block.timestamp, _accessorId, _epdId, _accessType, dataHash);
@@ -36,7 +39,11 @@ contract Audit {
         return accessorAuditIndexes[_accessorId].length;
     }
 
-    function getAccessorLogByIndex(string calldata _accessorId, uint256 index) public view returns (AuditEntry memory) {
+    function getAccessorLogByIndex(string calldata _accessorId, uint256 index)
+        public
+        view
+        returns (AuditEntry memory)
+    {
         return auditLog[accessorAuditIndexes[_accessorId][index]];
     }
 
@@ -47,5 +54,4 @@ contract Audit {
     function getEpdLogByIndex(string calldata _epdId, uint256 index) public view returns (AuditEntry memory) {
         return auditLog[accessorAuditIndexes[_epdId][index]];
     }
-
 }
